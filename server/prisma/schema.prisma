@@ -1,13 +1,43 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Driver {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  phone      String?
+  license    String?
+  status     String   @default("Active")
+  created_at DateTime @default(now())
+  jobs       Job[]
+}
+
+model Customer {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String?
+  phone      String?
+  address    String?
+  created_at DateTime @default(now())
+  jobs       Job[]
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  driver      Driver   @relation(fields: [driver_id], references: [id])
+  driver_id   Int
+  customer    Customer @relation(fields: [customer_id], references: [id])
+  customer_id Int
+  origin      String
+  destination String
+  commodity   String
+  status      String   @default("Pending")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
