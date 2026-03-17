@@ -3,14 +3,20 @@ import express from 'express'
 import type { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import { PrismaClient } from '@prisma/client'
-
-
+import {register, login, authenticate} from './auth'
 
 const prisma = new PrismaClient()
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+//Auth routes (public)
+app.post ('/auth/register', register)
+app.post('/auth/login', login)
+
+//Protect all routes below this line
+app.use(authenticate)
 
 // --- Drivers ---
 app.get('/drivers', async (req: Request, res: Response) => {
