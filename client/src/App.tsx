@@ -6,7 +6,7 @@ import Drivers from './pages/Drivers'
 import Customers from './pages/Customers'
 import Jobs from './pages/Jobs'
 
-const API = 'http://localhost:3001'
+const API = process.env.REACT_APP_API_URL || 'http://localhost:3001'
 
 export default function App() {
   const [token, setToken] = useState<string | null>(null)

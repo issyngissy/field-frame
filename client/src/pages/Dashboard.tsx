@@ -7,7 +7,7 @@ interface Customer { id: number; name: string; email: string | null; phone: stri
 interface Job { id: number; driver: Driver; customer: Customer; origin: string; destination: string; commodity: string; status: string; created_at: string }
 
 //what's calling the backend server node.js/express - can be swapped out for Azure URL in production
-const API = 'http://localhost:3001'
+const API = process.env.REACT_APP_API_URL || 'http://localhost:3001'
 
 
 const statusColors: Record<string, { bg: string; color: string }> = {
@@ -66,7 +66,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ maxWidth: '1100px' }}>
+    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <div style={{ fontSize: '11px', color: '#4a9eff', letterSpacing: '3px', marginBottom: '4px' }}>OVERVIEW</div>

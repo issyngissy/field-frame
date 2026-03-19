@@ -10,7 +10,7 @@ interface Customer {
   address: string | null
 }
 
-const API = 'http://localhost:3001'
+const API = process.env.REACT_APP_API_URL || 'http://localhost:3001'
 
 // Default empty form state for creating a new customer
 const emptyForm = { name: '', email: '', phone: '', address: '' }
@@ -99,7 +99,7 @@ export default function Customers() {
   }
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
       {/* Header row with title and add button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
