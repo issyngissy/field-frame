@@ -111,6 +111,22 @@ app.patch('/jobs/:id', async (req: Request, res: Response) => {
     data: { status },
     include: { driver: true, customer: true }
   })
+
+  //Fire webhook to Make.com when job status changes
+  fetch ('https://hook.eu1.make.com/lk3epm4vcheyhgxsay06ku6gu02zs82c', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      job_id: job.id,
+      status: job.status, 
+      driver: job.driver.name,
+      customer: job.customer.name,
+      origin: job.origin,
+      destination: job.destination,
+      updated_at: new Date().toISOString()
+    })
+  }).catch(err => console.error('Webhook failed:', err))
+
   res.json(job)
 })
 
