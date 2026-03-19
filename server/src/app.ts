@@ -34,6 +34,23 @@ app.post('/drivers', async (req: Request, res: Response) => {
   res.json(driver)
 })
 
+//Update a drivers details or status by ID
+app.patch('/drivers/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string)
+  const { name, email, phone, license, status, inducted, induction_date } = req.body
+  const driver = await prisma.driver.update({
+    where: { id },
+    data: { name, email, phone, license, status, inducted, induction_date }
+  })
+  res.json(driver)
+})
+//Delete a driver by ID
+app.delete('/drivers/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string)
+  await prisma.driver.delete({ where: { id } })
+  res.json({ success: true })
+})
+
 // --- Customers ---
 app.get('/customers', async (req: Request, res: Response) => {
   const customers = await prisma.customer.findMany({
@@ -48,6 +65,24 @@ app.post('/customers', async (req: Request, res: Response) => {
     data: { name, email, phone, address }
   })
   res.json(customer)
+})
+
+// Update a customer's details by ID
+app.patch('/customers/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string)
+  const { name, email, phone, address } = req.body
+  const customer = await prisma.customer.update({
+    where: { id },
+    data: { name, email, phone, address }
+  })
+  res.json(customer)
+})
+
+// Delete a customer by ID
+app.delete('/customers/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string)
+  await prisma.customer.delete({ where: { id } })
+  res.json({ success: true })
 })
 
 // --- Jobs ---
