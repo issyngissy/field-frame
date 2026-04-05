@@ -4,6 +4,7 @@ import type { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import { PrismaClient } from '@prisma/client'
 import {register, login, authenticate} from './auth'
+import { generatePODPDF } from './utils/testPDF'
 
 const prisma = new PrismaClient()
 const app = express()
@@ -135,6 +136,43 @@ app.delete('/jobs/:id', async (req: Request, res: Response) => {
   await prisma.job.delete({ where: { id } })
   res.json({ success: true })
 })
+
+// Generate and download POD PDF for a job
+app.get('/jobs/:id/pod', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string)
+
+  // Fetch job with driver and customer from database
+  const job = await prisma.job.findUnique({
+    where: { id },
+    include: { driver: true, customer: true }
+  })
+
+  if (!job) {
+    res.status(404).json({ error: 'Job not found' })
+    return
+  }
+
+  // Generate the PDF using real job data
+  const pdf = await generatePODPDF({
+    job_id: job.id,
+    driver: job.driver.name,
+    customer: job.customer.name,
+    origin: job.origin,
+    destination: job.destination,
+    commodity: job.commodity,
+    status: job.status,
+    notes: '',
+    created_at: job.created_at.toISOString()
+  })
+
+  // Send as downloadable PDF file
+  const pdfBuffer = Buffer.from(pdf)
+  res.setHeader('Content-Type', 'application/pdf')
+  res.setHeader('Content-Disposition', `attachment; filename="POD-${job.id}.pdf"`)
+  res.setHeader('Content-Length', pdfBuffer.length)
+  res.end(pdfBuffer)
+})
+
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err)
