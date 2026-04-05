@@ -20,7 +20,10 @@ services:
       - db
 
   client:
-    build: ./client
+    build:
+      context: ./client
+      args:
+        REACT_APP_API_URL: http://192.168.1.110:3001
     ports:
       - "3000:3000"
     environment:
